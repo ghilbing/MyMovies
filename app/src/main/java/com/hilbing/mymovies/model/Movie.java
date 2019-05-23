@@ -132,8 +132,9 @@ public class Movie implements Parcelable
         this.popularity = popularity;
     }
 
+    String baseImageUrl = "https://image.tmdb.org/t/p/w185";
     public String getPosterPath() {
-        return posterPath;
+        return baseImageUrl + posterPath;
     }
 
     public void setPosterPath(String posterPath) {
