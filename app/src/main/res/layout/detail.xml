@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/backgroundView"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.hilbing.mymovies.activities.DetailActivity"
+    tools:showIn="@layout/activity_detail">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_movie_rating_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/rating"
+                android:textAlignment="center"
+                android:padding="@dimen/movie_title_padding"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_title"/>
+
+            <TextView
+                android:id="@+id/tv_movie_rating"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/rating"
+                android:textAlignment="center"
+                android:padding="@dimen/movie_title_padding"
+                android:textStyle="normal"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_movie_synopsis_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/synopsis"
+                android:textAlignment="center"
+                android:padding="@dimen/movie_title_padding"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_title"/>
+
+            <TextView
+                android:id="@+id/tv_movie_synopsis"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/synopsis"
+                android:textAlignment="center"
+                android:padding="@dimen/movie_title_padding"
+                android:textStyle="italic"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:id="@+id/tv_movie_release_label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/release_date"
+                android:textAlignment="center"
+                android:padding="@dimen/movie_title_padding"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_title"/>
+
+            <TextView
+                android:id="@+id/tv_release"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/release_date"
+                android:textAlignment="center"
+                android:padding="@dimen/movie_title_padding"
+                android:textStyle="italic"
+                android:textSize="@dimen/text_size_normal"/>
+
+
+        </LinearLayout>
+
+
+
+
+    </ScrollView>
+
+
+
+
+
+</android.support.constraint.ConstraintLayout>

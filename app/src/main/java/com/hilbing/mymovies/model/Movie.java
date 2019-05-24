@@ -38,7 +38,7 @@ public class Movie implements Parcelable
     private String originalTitle;
     @SerializedName("genre_ids")
     @Expose
-    private List<Integer> genreIds = null;
+    private int[] genreIds = new int[0];
     @SerializedName("backdrop_path")
     @Expose
     private String backdropPath;
@@ -74,7 +74,7 @@ public class Movie implements Parcelable
         this.posterPath = ((String) in.readValue((String.class.getClassLoader())));
         this.originalLanguage = ((String) in.readValue((String.class.getClassLoader())));
         this.originalTitle = ((String) in.readValue((String.class.getClassLoader())));
-        in.readList(this.genreIds, (java.lang.Integer.class.getClassLoader()));
+        this.genreIds = in.createIntArray();
         this.backdropPath = ((String) in.readValue((String.class.getClassLoader())));
         this.adult = ((Boolean) in.readValue((Boolean.class.getClassLoader())));
         this.overview = ((String) in.readValue((String.class.getClassLoader())));
@@ -132,7 +132,7 @@ public class Movie implements Parcelable
         this.popularity = popularity;
     }
 
-    String baseImageUrl = "https://image.tmdb.org/t/p/w185";
+    String baseImageUrl = "https://image.tmdb.org/t/p/w500";
     public String getPosterPath() {
         return baseImageUrl + posterPath;
     }
@@ -157,16 +157,17 @@ public class Movie implements Parcelable
         this.originalTitle = originalTitle;
     }
 
-    public List<Integer> getGenreIds() {
+    public int[] getGenreIds() {
         return genreIds;
     }
 
-    public void setGenreIds(List<Integer> genreIds) {
+    public void setGenreIds(int[] genreIds) {
         this.genreIds = genreIds;
     }
 
     public String getBackdropPath() {
-        return backdropPath;
+
+        return baseImageUrl + backdropPath;
     }
 
     public void setBackdropPath(String backdropPath) {
@@ -207,7 +208,7 @@ public class Movie implements Parcelable
         dest.writeValue(posterPath);
         dest.writeValue(originalLanguage);
         dest.writeValue(originalTitle);
-        dest.writeList(genreIds);
+        dest.writeIntArray(genreIds);
         dest.writeValue(backdropPath);
         dest.writeValue(adult);
         dest.writeValue(overview);
