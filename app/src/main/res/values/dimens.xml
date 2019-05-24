@@ -9,5 +9,10 @@
     <dimen name="card_elevation">3dp</dimen>
     <dimen name="user_rating_padding">5dp</dimen>
     <dimen name="user_rating">12dp</dimen>
+    <dimen name="detail_image_height">400dp</dimen>
+    <dimen name="margin_end_collapsing">64dp</dimen>
+    <dimen name="margin_start_collapsing">48dp</dimen>
+    <dimen name="text_size_title">20sp</dimen>
+    <dimen name="text_size_normal">15sp</dimen>
 
 </resources>
