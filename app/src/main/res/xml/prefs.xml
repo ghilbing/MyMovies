@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <ListPreference
+            android:key="@string/pref_sort_order_key"
+            android:title="@string/pref_sort_label"
+            android:summary="@string/select_order_of_the_movies"
+            android:entries="@array/sort_order"
+            android:entryValues="@array/sort_values">
+        </ListPreference>
+
+</PreferenceScreen>
