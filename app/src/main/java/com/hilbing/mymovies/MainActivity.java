@@ -1,9 +1,12 @@
 package com.hilbing.mymovies;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,17 +17,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.hilbing.mymovies.activities.SettingsActivity;
 import com.hilbing.mymovies.adapter.GridAdapter;
 import com.hilbing.mymovies.apiConnection.ApiClient;
 import com.hilbing.mymovies.apiConnection.TMDBInterface;
 import com.hilbing.mymovies.model.Movie;
 import com.hilbing.mymovies.model.MovieResults;
-
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -32,17 +33,16 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean isConnected = false;
 
     public static int PAGE = 1;
     public static String LANGUAGE = "en_US";
-    public static String CATEGORY = "top_rated";
+    public static String CATEGORY = "";
 
     private List<Movie> movies;
     private GridAdapter mAdapter;
@@ -64,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
 
         initUI();
 
+        checkSortOrder();
+
         //it will charge the movies by default
-        fetchMovies();
+       // fetchMovies(CATEGORY);
     }
 
     private void initUI() {
@@ -89,21 +91,87 @@ public class MainActivity extends AppCompatActivity {
 
         isConnected = checkNetworkStatus();
 
+        registerSharedPreferencesListener();
+
         if (isConnected) {
 
             mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    fetchMovies();
+                    checkSortOrder();
+                    mAdapter.notifyDataSetChanged();
                 }
             });
         }
 
     }
 
-    private void fetchMovies() {
+    private void registerSharedPreferencesListener() {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        preferences.registerOnSharedPreferenceChangeListener(this);
+
+    }
+
+    private void unregisterSharedPreferencesListener(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        preferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    private boolean checkNetworkStatus() {
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.d(TAG, "Entra o no entra.....");
+        checkNetworkStatus();
+        checkSortOrder();
+    }
+
+    private void checkSortOrder() {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String order = preferences.getString(
+                this.getString(R.string.pref_sort_order_key),"");
+
+        if (order.equals(this.getString(R.string.pref_popular_key))){
+            CATEGORY = getResources().getString(R.string.pref_popular_key);
+        } else {
+            CATEGORY = getResources().getString(R.string.pref_top_rated_key);
+        }
+        fetchMovies(CATEGORY);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void fetchMovies(String category) {
 
         mRefresh.setRefreshing(true);
+        Log.d(TAG, "CATEGORY: " + category);
 
         try{
             //checking if API-KEY is empty
@@ -114,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             }
             ApiClient client = new ApiClient();
             TMDBInterface tmdbInterface = client.getClient().create(TMDBInterface.class);
-            Call<MovieResults> call = tmdbInterface.getMovies(CATEGORY, BuildConfig.TMDBApi, LANGUAGE, PAGE);
+            Call<MovieResults> call = tmdbInterface.getMovies(category, BuildConfig.TMDBApi, LANGUAGE, PAGE);
 
             mProgressBar.setVisibility(View.VISIBLE);
 
@@ -142,27 +210,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkNetworkStatus() {
 
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-
-    }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
+    protected void onResume() {
+        super.onResume();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu_settings:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        unregisterSharedPreferencesListener();
+
+        if (movies.isEmpty()){
+            checkSortOrder();
+        } else {
+
         }
     }
 }
