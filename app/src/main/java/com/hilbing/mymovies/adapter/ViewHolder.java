@@ -39,16 +39,13 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
     @Override
     public void onClick(View view) {
         int pos = getAdapterPosition();
-        Log.i("POS", String.valueOf(pos));
-        Log.i("Movies", movieList.toString());
         mContext = view.getContext();
         if (pos != RecyclerView.NO_POSITION) {
-            Log.i("Movies", movieList.toString());
             Movie movieClicked = movieList.get(pos);
             Intent intent = new Intent(mContext, DetailActivity.class);
             intent.putExtra(MOVIE, movieClicked);
             mContext.startActivity(intent);
-            Toast.makeText(mContext, "You clicked " + movieClicked.getOriginalTitle(), Toast.LENGTH_SHORT).show();
+
 
         }
     }

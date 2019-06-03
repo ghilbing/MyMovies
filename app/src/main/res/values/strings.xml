@@ -8,9 +8,13 @@
     <string name="release_date">Release Date</string>
     <string name="pref_sort_label">Sort Order</string>
     <string name="pref_sort_order_key">sortOrder</string>
+    <string name="pref_popular_key">popular</string>
+    <string name="pref_top_rated_key">top_rated</string>
     <string name="pref_popular">Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="get_api_key">Please get API key from www.themoviedb.org</string>
     <string name="error_fetching_data">Error fetching data from internet</string>
+    <string name="select_category">Select category of movies</string>
+    <string name="select_order_of_the_movies">Select order of the movies</string>
 
 </resources>
