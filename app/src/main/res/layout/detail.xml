@@ -37,20 +37,14 @@
                 android:textStyle="bold"
                 android:textSize="@dimen/text_size_title"/>
 
-            <TextView
-                android:id="@+id/tv_movie_rating"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/rating"
-                android:textAlignment="center"
-                android:padding="@dimen/movie_title_padding"
-                android:textStyle="normal"
-                android:textSize="@dimen/text_size_normal"/>
-
             <RatingBar
                 android:id="@+id/ratingBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:numStars="5"
+                android:rating="2"
+                android:stepSize="1" />
 
             <TextView
                 android:id="@+id/tv_movie_synopsis_label"

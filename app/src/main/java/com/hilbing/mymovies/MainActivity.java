@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.hilbing.mymovies.activities.SettingsActivity;
 import com.hilbing.mymovies.adapter.GridAdapter;
 import com.hilbing.mymovies.apiConnection.ApiClient;
@@ -63,11 +62,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setContentView(R.layout.activity_main);
 
         initUI();
-
         checkSortOrder();
 
-        //it will charge the movies by default
-       // fetchMovies(CATEGORY);
     }
 
     private void initUI() {
@@ -110,14 +106,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
-        Log.d(TAG, "REGISTER LISTENER.....");
 
     }
 
     private void unregisterSharedPreferencesListener(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.unregisterOnSharedPreferenceChangeListener(this);
-        Log.d(TAG, "UN----REGISTER LISTENER.....");
     }
 
     private boolean checkNetworkStatus() {
@@ -150,15 +144,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.d(TAG, "Entra o no entra........................................");
         checkNetworkStatus();
         checkSortOrder();
 
     }
 
     private void checkSortOrder() {
-
-        Log.d(TAG, "ENTRA AHORA A ORDENAR....");
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String order = preferences.getString(
