@@ -108,14 +108,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private void registerSharedPreferencesListener() {
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
+        Log.d(TAG, "REGISTER LISTENER.....");
 
     }
 
     private void unregisterSharedPreferencesListener(){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.unregisterOnSharedPreferenceChangeListener(this);
+        Log.d(TAG, "UN----REGISTER LISTENER.....");
     }
 
     private boolean checkNetworkStatus() {
@@ -151,9 +153,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         Log.d(TAG, "Entra o no entra........................................");
         checkNetworkStatus();
         checkSortOrder();
+
     }
 
     private void checkSortOrder() {
+
+        Log.d(TAG, "ENTRA AHORA A ORDENAR....");
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String order = preferences.getString(
@@ -216,11 +221,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         super.onResume();
 
         registerSharedPreferencesListener();
+        checkNetworkStatus();
+        checkSortOrder();
 
         if (movies.isEmpty()){
             checkSortOrder();
-        } else {
-
         }
     }
 
