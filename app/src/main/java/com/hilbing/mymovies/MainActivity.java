@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.d(TAG, "Entra o no entra.....");
+        Log.d(TAG, "Entra o no entra........................................");
         checkNetworkStatus();
         checkSortOrder();
     }
@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private void fetchMovies(String category) {
 
         mRefresh.setRefreshing(true);
-        Log.d(TAG, "CATEGORY: " + category);
 
         try{
             //checking if API-KEY is empty
@@ -216,12 +215,18 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onResume() {
         super.onResume();
 
-        unregisterSharedPreferencesListener();
+        registerSharedPreferencesListener();
 
         if (movies.isEmpty()){
             checkSortOrder();
         } else {
 
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterSharedPreferencesListener();
     }
 }
