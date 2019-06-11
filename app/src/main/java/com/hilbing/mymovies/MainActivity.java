@@ -25,6 +25,7 @@ import com.hilbing.mymovies.apiConnection.ApiClient;
 import com.hilbing.mymovies.apiConnection.TMDBInterface;
 import com.hilbing.mymovies.model.Movie;
 import com.hilbing.mymovies.model.MovieResults;
+import com.hilbing.mymovies.utils.PaginationScrollListener;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -39,9 +40,16 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean isConnected = false;
 
-    public static int PAGE = 1;
+    public static int PAGE_START = 1;
     public static String LANGUAGE = "en_US";
     public static String CATEGORY = "";
+
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private int TOTAL_PAGES = 10;
+    private int currentPage = PAGE_START;
+
+    private GridLayoutManager gridLayoutManager;
 
     private List<Movie> movies;
     private GridAdapter mAdapter;
@@ -83,6 +91,33 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
+
+//        mRecyclerView.addOnScrollListener(new PaginationScrollListener(gridLayoutManager) {
+//            @Override
+//            protected void loadMoreItems() {
+//                isLoading = true;
+//                currentPage += 1;
+//                checkNetworkStatus();
+//                checkSortOrder();
+//                loadNextPage(CATEGORY);
+//            }
+//
+//            @Override
+//            public int getTotalPageCount() {
+//                return TOTAL_PAGES;
+//            }
+//
+//            @Override
+//            public boolean isLastPage() {
+//                return isLastPage;
+//            }
+//
+//            @Override
+//            public boolean isLoading() {
+//                return isLoading;
+//            }
+//        });
+
         mAdapter.notifyDataSetChanged();
 
         isConnected = checkNetworkStatus();
@@ -177,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             }
             ApiClient client = new ApiClient();
             TMDBInterface tmdbInterface = client.getClient().create(TMDBInterface.class);
-            Call<MovieResults> call = tmdbInterface.getMovies(category, BuildConfig.TMDBApi, LANGUAGE, PAGE);
+            Call<MovieResults> call = tmdbInterface.getMovies(category, BuildConfig.TMDBApi, LANGUAGE, PAGE_START);
 
             mProgressBar.setVisibility(View.VISIBLE);
 
@@ -190,6 +225,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     if (mRefresh.isRefreshing()){
                         mRefresh.setRefreshing(false);
                     }
+
+                    if(currentPage <= TOTAL_PAGES) mAdapter.notifyDataSetChanged();
+                    else isLastPage = true;
+
                     mProgressBar.setVisibility(View.INVISIBLE);
                 }
 
@@ -203,6 +242,34 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             Log.e(TAG, e.getMessage());
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void loadNextPage(String category){
+
+        Log.d(TAG, "Loading next page: " + currentPage);
+
+        ApiClient client = new ApiClient();
+        TMDBInterface tmdbInterface = client.getClient().create(TMDBInterface.class);
+        Call<MovieResults> call = tmdbInterface.getMovies(category, BuildConfig.TMDBApi, LANGUAGE, currentPage);
+        call.enqueue(new Callback<MovieResults>() {
+            @Override
+            public void onResponse(Call<MovieResults> call, Response<MovieResults> response) {
+                isLoading = false;
+                movies = response.body().getResults();
+                mRecyclerView.setAdapter(new GridAdapter(getApplicationContext(), movies));
+                if (mRefresh.isRefreshing()){
+                    mRefresh.setRefreshing(false);
+                }
+                if (currentPage != TOTAL_PAGES) mAdapter.notifyDataSetChanged();
+                else isLastPage = true;
+            }
+
+            @Override
+            public void onFailure(Call<MovieResults> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
     }
 
 
