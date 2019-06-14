@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.hilbing.mymovies.R;
 import com.hilbing.mymovies.activities.DetailActivity;
 import com.hilbing.mymovies.model.Movie;
@@ -22,13 +24,13 @@ import butterknife.ButterKnife;
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder>{
 
     private Context mContext;
-    private List<Movie> movieList;
+    private List<Movie> mMovieList;
 
     public static final String MOVIE = "movie";
 
-    public GridAdapter(Context mContext, List<Movie> movieList) {
-        this.mContext = mContext;
-        this.movieList = movieList;
+    public GridAdapter(Context context, List<Movie> movieList) {
+        mContext = context;
+        mMovieList = movieList;
     }
 
     @NonNull
@@ -40,20 +42,23 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        Picasso.get().load(movieList.get(i).getPosterPath())
+        Picasso.get().load(mMovieList.get(i).getPosterPath())
                 .placeholder(R.drawable.movie_placeholder)
                 .into(viewHolder.mImageMove);
+        viewHolder.mMovieTitle.setText(mMovieList.get(i).getTitle());
     }
 
     @Override
     public int getItemCount() {
-        return movieList.size();
+        return mMovieList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.iv_thumbnail_movie_rv)
         ImageView mImageMove;
+        @BindView(R.id.tv_movie_title)
+        TextView mMovieTitle;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,8 +71,8 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder>{
             int pos = getAdapterPosition();
             mContext = view.getContext();
             if (pos != RecyclerView.NO_POSITION) {
-                Log.i("Movies", movieList.toString());
-                Movie movieClicked = movieList.get(pos);
+                Log.i("Movies", mMovieList.toString());
+                Movie movieClicked = mMovieList.get(pos);
                 Intent intent = new Intent(mContext, DetailActivity.class);
                 intent.putExtra(MOVIE, movieClicked);
                 mContext.startActivity(intent);

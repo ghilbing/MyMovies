@@ -10,11 +10,20 @@
     <string name="pref_sort_order_key">sortOrder</string>
     <string name="pref_popular_key">popular</string>
     <string name="pref_top_rated_key">top_rated</string>
+    <string name="pref_favorite_key">favorite</string>
     <string name="pref_popular">Popular</string>
     <string name="top_rated">Top Rated</string>
+    <string name="pref_favorite">Favorite Movies</string>
     <string name="get_api_key">Please get API key from www.themoviedb.org</string>
     <string name="error_fetching_data">Error fetching data from internet</string>
+    <string name="error_fetching_trailers">Error fetching trailers from internet</string>
     <string name="select_category">Select category of movies</string>
     <string name="select_order_of_the_movies">Select order of the movies</string>
+    <string name="trailer">Trailers</string>
+    <string name="reviews">Reviews</string>
+    <string name="author">Author:</string>
+    <string name="favorite_added">Favorite Added</string>
+    <string name="favorite_removed">Favorite Removed</string>
+
 
 </resources>
