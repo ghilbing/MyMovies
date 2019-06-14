@@ -1,7 +1,10 @@
 package com.hilbing.mymovies.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,12 +16,15 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
+
+import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.hilbing.mymovies.BuildConfig;
 import com.hilbing.mymovies.R;
 import com.hilbing.mymovies.adapter.ReviewAdapter;
 import com.hilbing.mymovies.adapter.TrailerAdapter;
 import com.hilbing.mymovies.apiConnection.ApiClient;
 import com.hilbing.mymovies.apiConnection.TMDBInterface;
+import com.hilbing.mymovies.database.FavoriteMoviesDBHelper;
 import com.hilbing.mymovies.model.Movie;
 import com.hilbing.mymovies.model.Review;
 import com.hilbing.mymovies.model.ReviewResults;
@@ -53,6 +59,8 @@ public class DetailActivity extends AppCompatActivity {
     RecyclerView mRvTrailer;
     @BindView(R.id.rv_reviews)
     RecyclerView mRvReview;
+    @BindView(R.id.btn_favorite)
+    MaterialFavoriteButton mFavorite;
 
     private TrailerAdapter mTrailerAdapter;
     private List<Trailer> trailerList;
@@ -60,12 +68,16 @@ public class DetailActivity extends AppCompatActivity {
     private ReviewAdapter mReviewAdapter;
     private List<Review> reviewList;
 
+    private FavoriteMoviesDBHelper favoriteMoviesDBHelper;
+    private Movie favoriteMovie;
+    private final AppCompatActivity activity = DetailActivity.this;
+
 
     public static final String MOVIE = "movie";
     private Movie mMovie;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
@@ -89,6 +101,42 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         initViews();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+            @Override
+            public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+                if (favorite){
+                    SharedPreferences.Editor editor = getSharedPreferences(getPackageName(), MODE_PRIVATE).edit();
+                    editor.putBoolean(getResources().getString(R.string.favorite_added), true);
+                    editor.commit();
+                    saveFavorite();
+                    Snackbar.make(buttonView, getResources().getString(R.string.favorite_added), Snackbar.LENGTH_LONG).show();
+                } else {
+                    int movieId = mMovie.getId();
+                    SharedPreferences.Editor editor = getSharedPreferences(getPackageName(), MODE_PRIVATE).edit();
+                    editor.putBoolean(getResources().getString(R.string.favorite_removed), true);
+                    editor.commit();
+                    favoriteMoviesDBHelper = new FavoriteMoviesDBHelper(DetailActivity.this);
+                    favoriteMoviesDBHelper.removeFavorite(movieId);
+                    Snackbar.make(buttonView, getResources().getString(R.string.favorite_removed), Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    public void saveFavorite() {
+        favoriteMoviesDBHelper = new FavoriteMoviesDBHelper(activity);
+        favoriteMovie = new Movie();
+
+        favoriteMovie.setId(mMovie.getId());
+        favoriteMovie.setTitle(mMovie.getTitle());
+        favoriteMovie.setPosterPath(mMovie.getPosterPath());
+        favoriteMovie.setVoteAverage(mMovie.getVoteAverage());
+        favoriteMovie.setOverview(mMovie.getOverview());
+
+        favoriteMoviesDBHelper.addFavorite(favoriteMovie);
+
     }
 
     @Override

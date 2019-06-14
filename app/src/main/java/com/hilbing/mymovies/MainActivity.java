@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import com.hilbing.mymovies.activities.SettingsActivity;
 import com.hilbing.mymovies.adapter.GridAdapter;
 import com.hilbing.mymovies.apiConnection.ApiClient;
 import com.hilbing.mymovies.apiConnection.TMDBInterface;
+import com.hilbing.mymovies.database.FavoriteMoviesDBHelper;
 import com.hilbing.mymovies.model.Movie;
 import com.hilbing.mymovies.model.MovieResults;
 import com.hilbing.mymovies.utils.PaginationScrollListener;
@@ -48,6 +50,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private boolean isLastPage = false;
     private int TOTAL_PAGES = 10;
     private int currentPage = PAGE_START;
+
+    private AppCompatActivity activity = MainActivity.this;
+
+    private FavoriteMoviesDBHelper favoriteMoviesDBHelper;
 
     private GridLayoutManager gridLayoutManager;
 
@@ -120,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         mAdapter.notifyDataSetChanged();
 
+        favoriteMoviesDBHelper = new FavoriteMoviesDBHelper(activity);
+
         isConnected = checkNetworkStatus();
 
         registerSharedPreferencesListener();
@@ -134,6 +142,48 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 }
             });
         }
+
+    }
+
+    private void initFavorites() {
+
+        ButterKnife.bind(this);
+
+        movies = new ArrayList<>();
+        mAdapter = new GridAdapter(this, movies);
+
+        //Method to detect orientation of the screen and change the grid columns
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        } else {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        }
+
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+        favoriteMoviesDBHelper = new FavoriteMoviesDBHelper(activity);
+        getAllFavorite();
+
+    }
+
+    private void getAllFavorite() {
+        new AsyncTask<Void, Void, Void>(){
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                movies.clear();
+                movies.addAll(favoriteMoviesDBHelper.getAllFavorites());
+                Log.d(TAG, movies.toString());
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid){
+                super.onPostExecute(aVoid);
+                mAdapter.notifyDataSetChanged();
+            }
+        }.execute();
 
     }
 
@@ -192,12 +242,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         if (order.equals(this.getString(R.string.pref_popular_key))){
             CATEGORY = getResources().getString(R.string.pref_popular_key);
-        } else {
+
+        } else if (order.equals(this.getString(R.string.pref_favorite_key))){
+            initFavorites();
+
+        }
+        else {
             CATEGORY = getResources().getString(R.string.pref_top_rated_key);
         }
         fetchMovies(CATEGORY);
         mAdapter.notifyDataSetChanged();
     }
+
+
 
     private void fetchMovies(String category) {
 
@@ -219,7 +276,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             call.enqueue(new Callback<MovieResults>() {
                 @Override
                 public void onResponse(Call<MovieResults> call, Response<MovieResults> response) {
+                    movies = new ArrayList<>();
                     movies = response.body().getResults();
+                    Log.d(TAG, response.body().getResults().toString());
                     mRecyclerView.setAdapter(new GridAdapter(getApplicationContext(), movies));
                     mRecyclerView.smoothScrollToPosition(0);
                     if (mRefresh.isRefreshing()){

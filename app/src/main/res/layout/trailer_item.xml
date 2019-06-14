@@ -38,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/movie_title"
                 android:textStyle="normal"
+                android:textSize="@dimen/text_size_small"
                 android:layout_gravity="center_vertical"
                 android:padding="@dimen/movie_title_padding"/>
 

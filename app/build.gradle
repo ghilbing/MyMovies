@@ -53,4 +53,7 @@ dependencies {
 
     //Preferences
     implementation 'com.android.support:preference-v7:28.0.0'
+
+    //Favorite Button - developed by Ivan Baranov
+    implementation 'com.github.ivbaranov:materialfavoritebutton:0.1.5'
 }

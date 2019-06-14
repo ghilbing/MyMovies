@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hilbing.mymovies.MyApplication;
 import com.hilbing.mymovies.R;
 import com.hilbing.mymovies.model.Trailer;
 
@@ -61,7 +62,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION){
-                        Trailer detailItem = mTrailerList.get(position);
                         String videoId = mTrailerList.get(position).getKey();
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoId));
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
