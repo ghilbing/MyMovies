@@ -132,9 +132,8 @@ public class Movie implements Parcelable
         this.popularity = popularity;
     }
 
-    String baseImageUrl = "https://image.tmdb.org/t/p/w500";
     public String getPosterPath() {
-        return baseImageUrl + posterPath;
+        return posterPath;
     }
 
     public void setPosterPath(String posterPath) {
@@ -167,7 +166,7 @@ public class Movie implements Parcelable
 
     public String getBackdropPath() {
 
-        return baseImageUrl + backdropPath;
+        return backdropPath;
     }
 
     public void setBackdropPath(String backdropPath) {

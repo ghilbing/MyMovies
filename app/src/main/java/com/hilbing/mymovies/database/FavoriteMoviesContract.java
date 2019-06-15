@@ -10,6 +10,7 @@ public class FavoriteMoviesContract {
         public static final String COLUMN_MOVIE_TITLE = "movie_title";
         public static final String COLUMN_MOVIE_USER_RATING = "movie_user_rating";
         public static final String COLUMN_MOVIE_POSTER_PATH = "movie_poster_path";
+        public static final String COLUMN_MOVIE_BACKDROP_PATH = "movie_backdrop_path";
         public static final String COLUMN_MOVIE_SYNOPSIS = "movie_synopsis";
 
     }
