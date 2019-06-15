@@ -75,6 +75,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public static final String MOVIE = "movie";
     private Movie mMovie;
+    private  String baseImageUrl = "https://image.tmdb.org/t/p/w500";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -92,7 +93,9 @@ public class DetailActivity extends AppCompatActivity {
             mMovieSynopsis.setText(mMovie.getOverview());
             mRatingBar.setRating(Float.valueOf(String.valueOf(mMovie.getVoteAverage()/2)));
             mMovieRelease.setText(mMovie.getReleaseDate());
-            Picasso.get().load(mMovie.getBackdropPath()).placeholder(R.drawable.movie_placeholder).into(mMovieImage);
+            String backdropPath = mMovie.getBackdropPath();
+            Log.d(TAG, baseImageUrl + backdropPath);
+            Picasso.get().load(baseImageUrl + backdropPath).placeholder(R.drawable.movie_placeholder).into(mMovieImage);
             mCollapsingTB.setTitle(mMovie.getTitle());
             mCollapsingTB.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
             mCollapsingTB.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
@@ -111,6 +114,7 @@ public class DetailActivity extends AppCompatActivity {
                     editor.putBoolean(getResources().getString(R.string.favorite_added), true);
                     editor.commit();
                     saveFavorite();
+                    mFavorite.setFavoriteResource(R.drawable.ic_favorite);
                     Snackbar.make(buttonView, getResources().getString(R.string.favorite_added), Snackbar.LENGTH_LONG).show();
                 } else {
                     int movieId = mMovie.getId();
@@ -134,6 +138,7 @@ public class DetailActivity extends AppCompatActivity {
         favoriteMovie.setPosterPath(mMovie.getPosterPath());
         favoriteMovie.setVoteAverage(mMovie.getVoteAverage());
         favoriteMovie.setOverview(mMovie.getOverview());
+        favoriteMovie.setBackdropPath(mMovie.getBackdropPath());
 
         favoriteMoviesDBHelper.addFavorite(favoriteMovie);
 
@@ -169,7 +174,6 @@ public class DetailActivity extends AppCompatActivity {
     private void loadTrailers(){
         int movie_id = mMovie.getId();
         Toast.makeText(this, String.valueOf(movie_id), Toast.LENGTH_LONG).show();
-        Log.d(TAG, String.valueOf(movie_id));
         try{
             if (BuildConfig.TMDBApi.isEmpty()){
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.get_api_key), Toast.LENGTH_LONG).show();

@@ -90,39 +90,41 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         //Method to detect orientation of the screen and change the grid columns
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+            gridLayoutManager = new GridLayoutManager(this, 2);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
         } else {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+            gridLayoutManager = new GridLayoutManager(this, 3);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
         }
 
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 
-//        mRecyclerView.addOnScrollListener(new PaginationScrollListener(gridLayoutManager) {
-//            @Override
-//            protected void loadMoreItems() {
-//                isLoading = true;
-//                currentPage += 1;
-//                checkNetworkStatus();
-//                checkSortOrder();
-//                loadNextPage(CATEGORY);
-//            }
-//
-//            @Override
-//            public int getTotalPageCount() {
-//                return TOTAL_PAGES;
-//            }
-//
-//            @Override
-//            public boolean isLastPage() {
-//                return isLastPage;
-//            }
-//
-//            @Override
-//            public boolean isLoading() {
-//                return isLoading;
-//            }
-//        });
+        mRecyclerView.addOnScrollListener(new PaginationScrollListener(gridLayoutManager) {
+            @Override
+            protected void loadMoreItems() {
+                isLoading = true;
+                currentPage += 1;
+                checkNetworkStatus();
+                checkSortOrder();
+                loadNextPage(CATEGORY);
+            }
+
+            @Override
+            public int getTotalPageCount() {
+                return TOTAL_PAGES;
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return isLastPage;
+            }
+
+            @Override
+            public boolean isLoading() {
+                return isLoading;
+            }
+        });
 
         mAdapter.notifyDataSetChanged();
 
@@ -242,16 +244,23 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         if (order.equals(this.getString(R.string.pref_popular_key))){
             CATEGORY = getResources().getString(R.string.pref_popular_key);
+            fetchMovies(CATEGORY);
+            mAdapter.notifyDataSetChanged();
+            getSupportActionBar().setTitle(R.string.pref_popular);
+
+
 
         } else if (order.equals(this.getString(R.string.pref_favorite_key))){
             initFavorites();
-
+            getSupportActionBar().setTitle(R.string.pref_favorite);
         }
         else {
             CATEGORY = getResources().getString(R.string.pref_top_rated_key);
+            fetchMovies(CATEGORY);
+            mAdapter.notifyDataSetChanged();
+            getSupportActionBar().setTitle(R.string.pref_top_rated);
         }
-        fetchMovies(CATEGORY);
-        mAdapter.notifyDataSetChanged();
+
     }
 
 
@@ -278,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 public void onResponse(Call<MovieResults> call, Response<MovieResults> response) {
                     movies = new ArrayList<>();
                     movies = response.body().getResults();
-                    Log.d(TAG, response.body().getResults().toString());
                     mRecyclerView.setAdapter(new GridAdapter(getApplicationContext(), movies));
                     mRecyclerView.smoothScrollToPosition(0);
                     if (mRefresh.isRefreshing()){
@@ -330,8 +338,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         });
 
     }
-
-
 
     @Override
     protected void onResume() {

@@ -25,6 +25,7 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder>{
 
     private Context mContext;
     private List<Movie> mMovieList;
+    private String baseImageUrl = "https://image.tmdb.org/t/p/w500";
 
     public static final String MOVIE = "movie";
 
@@ -42,7 +43,8 @@ public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        Picasso.get().load(mMovieList.get(i).getPosterPath())
+        String poster = mMovieList.get(i).getPosterPath();
+        Picasso.get().load(baseImageUrl + poster)
                 .placeholder(R.drawable.movie_placeholder)
                 .into(viewHolder.mImageMove);
         viewHolder.mMovieTitle.setText(mMovieList.get(i).getTitle());

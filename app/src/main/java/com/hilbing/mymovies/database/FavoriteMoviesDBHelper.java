@@ -5,7 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.hilbing.mymovies.MyApplication;
 import com.hilbing.mymovies.model.Movie;
 
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ public class FavoriteMoviesDBHelper extends SQLiteOpenHelper {
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_USER_RATING + " REAL NOT NULL, " +
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_POSTER_PATH + " TEXT NOT NULL, " +
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_BACKDROP_PATH + " TEXT NOT NULL, " +
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_SYNOPSIS + " TEXT NOT NULL" +
                 ");";
         db.execSQL(SQL_CREATE_TABLE);
@@ -60,14 +64,28 @@ public class FavoriteMoviesDBHelper extends SQLiteOpenHelper {
         values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_USER_RATING, movie.getVoteAverage());
         values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_SYNOPSIS, movie.getOverview());
         values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_POSTER_PATH, movie.getPosterPath());
+        values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_BACKDROP_PATH, movie.getBackdropPath());
+        Log.d(TAG, movie.getPosterPath() + " " + movie.getBackdropPath());
 
-        db.insert(FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME, null, values);
-        db.close();
+        try {
+            Cursor cursor = db.rawQuery("SELECT * FROM favorites where movie_id = " + movie.getId(), null);
+            if (cursor.getCount() > 0){
+                Toast.makeText(MyApplication.getContext(), "Movie Already Exists", Toast.LENGTH_LONG).show();
+            } else {
+                db.insert(FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME, null, values);
+                db.close();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+
     }
 
     public void removeFavorite(int id){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME, FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_ID + "=" + id, null);
+        db.close();
     }
 
     public List<Movie> getAllFavorites(){
@@ -76,7 +94,9 @@ public class FavoriteMoviesDBHelper extends SQLiteOpenHelper {
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_TITLE,
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_USER_RATING,
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_SYNOPSIS,
-                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_POSTER_PATH
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_POSTER_PATH,
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_BACKDROP_PATH
+
         };
 
         String sortOrder = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_TITLE + " ASC";
@@ -99,6 +119,7 @@ public class FavoriteMoviesDBHelper extends SQLiteOpenHelper {
                 movie.setVoteAverage(Double.parseDouble(cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_USER_RATING))));
                 movie.setOverview(cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_SYNOPSIS)));
                 movie.setPosterPath(cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_POSTER_PATH)));
+                movie.setBackdropPath(cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_BACKDROP_PATH)));
 
                 favoriteList.add(movie);
             } while (cursor.moveToNext());
