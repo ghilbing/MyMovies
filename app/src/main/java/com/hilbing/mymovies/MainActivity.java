@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @BindView(R.id.rl_refresh)
     SwipeRefreshLayout mRefresh;
 
+    private PaginationScrollListener scrollListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setContentView(R.layout.activity_main);
 
         initUI();
-        checkSortOrder();
+        checkSortOrder(currentPage);
 
     }
 
@@ -100,31 +102,42 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addOnScrollListener(new PaginationScrollListener(gridLayoutManager) {
+        scrollListener = new PaginationScrollListener(gridLayoutManager) {
             @Override
-            protected void loadMoreItems() {
-                isLoading = true;
-                currentPage += 1;
-                checkNetworkStatus();
-                checkSortOrder();
-                loadNextPage(CATEGORY);
+            public void onLoadMore(int page, int totalItemsCount) {
+                if (currentPage <= TOTAL_PAGES){
+                    checkSortOrder(currentPage);
+                }
             }
+        };
 
-            @Override
-            public int getTotalPageCount() {
-                return TOTAL_PAGES;
-            }
 
-            @Override
-            public boolean isLastPage() {
-                return isLastPage;
-            }
 
-            @Override
-            public boolean isLoading() {
-                return isLoading;
-            }
-        });
+//        mRecyclerView.addOnScrollListener(new PaginationScrollListener(gridLayoutManager) {
+//            @Override
+//            protected void loadMoreItems() {
+//                isLoading = true;
+//                currentPage += 1;
+//                checkNetworkStatus();
+//                checkSortOrder();
+//                loadNextPage(CATEGORY);
+//            }
+//
+//            @Override
+//            public int getTotalPageCount() {
+//                return TOTAL_PAGES;
+//            }
+//
+//            @Override
+//            public boolean isLastPage() {
+//                return isLastPage;
+//            }
+//
+//            @Override
+//            public boolean isLoading() {
+//                return isLoading;
+//            }
+//        });
 
         mAdapter.notifyDataSetChanged();
 
@@ -139,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    checkSortOrder();
+                    checkSortOrder(currentPage);
                     mAdapter.notifyDataSetChanged();
                 }
             });
@@ -232,19 +245,20 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         checkNetworkStatus();
-        checkSortOrder();
+        checkSortOrder(currentPage);
 
     }
 
-    private void checkSortOrder() {
+    private void checkSortOrder(int currentPage) {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String order = preferences.getString(
                 this.getString(R.string.pref_sort_order_key),"");
 
         if (order.equals(this.getString(R.string.pref_popular_key))){
+
             CATEGORY = getResources().getString(R.string.pref_popular_key);
-            fetchMovies(CATEGORY);
+            fetchMovies(CATEGORY, currentPage);
             mAdapter.notifyDataSetChanged();
             getSupportActionBar().setTitle(R.string.pref_popular);
 
@@ -256,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
         else {
             CATEGORY = getResources().getString(R.string.pref_top_rated_key);
-            fetchMovies(CATEGORY);
+            fetchMovies(CATEGORY, currentPage);
             mAdapter.notifyDataSetChanged();
             getSupportActionBar().setTitle(R.string.pref_top_rated);
         }
@@ -265,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
 
-    private void fetchMovies(String category) {
+    private void fetchMovies(String category, final int currentPage) {
 
         mRefresh.setRefreshing(true);
 
@@ -278,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             }
             ApiClient client = new ApiClient();
             TMDBInterface tmdbInterface = client.getClient().create(TMDBInterface.class);
-            Call<MovieResults> call = tmdbInterface.getMovies(category, BuildConfig.TMDBApi, LANGUAGE, PAGE_START);
+            Call<MovieResults> call = tmdbInterface.getMovies(category, BuildConfig.TMDBApi, LANGUAGE, currentPage);
 
             mProgressBar.setVisibility(View.VISIBLE);
 
@@ -345,10 +359,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         registerSharedPreferencesListener();
         checkNetworkStatus();
-        checkSortOrder();
+        checkSortOrder(currentPage);
 
         if (movies.isEmpty()){
-            checkSortOrder();
+            checkSortOrder(currentPage);
         }
     }
 
