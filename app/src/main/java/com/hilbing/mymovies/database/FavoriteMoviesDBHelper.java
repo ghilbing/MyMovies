@@ -44,6 +44,7 @@ public class FavoriteMoviesDBHelper extends SQLiteOpenHelper {
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_USER_RATING + " REAL NOT NULL, " +
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_POSTER_PATH + " TEXT NOT NULL, " +
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_BACKDROP_PATH + " TEXT NOT NULL, " +
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_RELEASE_DATE + " TEXT NOT NULL, " +
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_SYNOPSIS + " TEXT NOT NULL" +
                 ");";
         db.execSQL(SQL_CREATE_TABLE);
@@ -65,6 +66,7 @@ public class FavoriteMoviesDBHelper extends SQLiteOpenHelper {
         values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_SYNOPSIS, movie.getOverview());
         values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_POSTER_PATH, movie.getPosterPath());
         values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_BACKDROP_PATH, movie.getBackdropPath());
+        values.put(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_RELEASE_DATE, movie.getReleaseDate());
         Log.d(TAG, movie.getPosterPath() + " " + movie.getBackdropPath());
 
         try {
@@ -95,6 +97,7 @@ public class FavoriteMoviesDBHelper extends SQLiteOpenHelper {
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_USER_RATING,
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_SYNOPSIS,
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_POSTER_PATH,
+                FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_RELEASE_DATE,
                 FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_BACKDROP_PATH
 
         };
@@ -120,6 +123,7 @@ public class FavoriteMoviesDBHelper extends SQLiteOpenHelper {
                 movie.setOverview(cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_SYNOPSIS)));
                 movie.setPosterPath(cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_POSTER_PATH)));
                 movie.setBackdropPath(cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_BACKDROP_PATH)));
+                movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_MOVIE_RELEASE_DATE)));
 
                 favoriteList.add(movie);
             } while (cursor.moveToNext());
