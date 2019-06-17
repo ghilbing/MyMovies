@@ -12,6 +12,8 @@ public class FavoriteMoviesContract {
         public static final String COLUMN_MOVIE_POSTER_PATH = "movie_poster_path";
         public static final String COLUMN_MOVIE_BACKDROP_PATH = "movie_backdrop_path";
         public static final String COLUMN_MOVIE_SYNOPSIS = "movie_synopsis";
+        public static final String COLUMN_MOVIE_RELEASE_DATE = "movie_release_date";
+
 
     }
 

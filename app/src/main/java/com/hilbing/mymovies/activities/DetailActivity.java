@@ -64,15 +64,11 @@ public class DetailActivity extends AppCompatActivity {
 
     private TrailerAdapter mTrailerAdapter;
     private List<Trailer> trailerList;
-
     private ReviewAdapter mReviewAdapter;
     private List<Review> reviewList;
-
     private FavoriteMoviesDBHelper favoriteMoviesDBHelper;
     private Movie favoriteMovie;
     private final AppCompatActivity activity = DetailActivity.this;
-
-
     public static final String MOVIE = "movie";
     private Movie mMovie;
     private  String baseImageUrl = "https://image.tmdb.org/t/p/w500";
@@ -82,7 +78,6 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
-
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -94,7 +89,6 @@ public class DetailActivity extends AppCompatActivity {
             mRatingBar.setRating(Float.valueOf(String.valueOf(mMovie.getVoteAverage()/2)));
             mMovieRelease.setText(mMovie.getReleaseDate());
             String backdropPath = mMovie.getBackdropPath();
-            Log.d(TAG, baseImageUrl + backdropPath);
             Picasso.get().load(baseImageUrl + backdropPath).placeholder(R.drawable.movie_placeholder).into(mMovieImage);
             mCollapsingTB.setTitle(mMovie.getTitle());
             mCollapsingTB.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
@@ -139,6 +133,7 @@ public class DetailActivity extends AppCompatActivity {
         favoriteMovie.setVoteAverage(mMovie.getVoteAverage());
         favoriteMovie.setOverview(mMovie.getOverview());
         favoriteMovie.setBackdropPath(mMovie.getBackdropPath());
+        favoriteMovie.setReleaseDate(mMovie.getReleaseDate());
 
         favoriteMoviesDBHelper.addFavorite(favoriteMovie);
 
@@ -173,7 +168,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private void loadTrailers(){
         int movie_id = mMovie.getId();
-        Toast.makeText(this, String.valueOf(movie_id), Toast.LENGTH_LONG).show();
         try{
             if (BuildConfig.TMDBApi.isEmpty()){
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.get_api_key), Toast.LENGTH_LONG).show();
@@ -192,7 +186,6 @@ public class DetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<TrailerResults> call, Throwable t) {
-                    Log.d(TAG, "ERROR FETCHING TRAILERS: " + t.getMessage());
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_fetching_trailers), Toast.LENGTH_LONG).show();
                 }
             });
