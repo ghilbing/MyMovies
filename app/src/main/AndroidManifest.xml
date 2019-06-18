@@ -26,6 +26,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.SettingsActivity"></activity>
+        <activity android:name=".activities.YoutubePlayerActivity"
+            android:theme="@android:style/Theme.Dialog"
+            android:excludeFromRecents="true"></activity>
     </application>
 
 </manifest>
