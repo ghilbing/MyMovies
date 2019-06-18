@@ -7,10 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.hilbing.mymovies.MyApplication;
 import com.hilbing.mymovies.model.Movie;
-
 import java.util.ArrayList;
 import java.util.List;
 

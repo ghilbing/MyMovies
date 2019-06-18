@@ -1,9 +1,7 @@
 package com.hilbing.mymovies.apiConnection;
 
 import com.hilbing.mymovies.model.MovieResults;
-import com.hilbing.mymovies.model.Review;
 import com.hilbing.mymovies.model.ReviewResults;
-import com.hilbing.mymovies.model.Trailer;
 import com.hilbing.mymovies.model.TrailerResults;
 
 import retrofit2.Call;

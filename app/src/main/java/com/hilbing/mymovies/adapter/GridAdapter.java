@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.hilbing.mymovies.R;
 import com.hilbing.mymovies.activities.DetailActivity;
 import com.hilbing.mymovies.model.Movie;

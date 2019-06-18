@@ -1,6 +1,5 @@
 package com.hilbing.mymovies.model;
 
-import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.gson.annotations.Expose;

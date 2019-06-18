@@ -16,7 +16,6 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
-
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.hilbing.mymovies.BuildConfig;
 import com.hilbing.mymovies.R;

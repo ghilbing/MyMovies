@@ -3,8 +3,6 @@ package com.hilbing.mymovies.utils;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-
 
 public abstract class PaginationScrollListener extends RecyclerView.OnScrollListener {
 

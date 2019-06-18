@@ -7,7 +7,6 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
-
 import com.hilbing.mymovies.R;
 
 public class MainSettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
@@ -49,29 +48,6 @@ public class MainSettingsFragment extends PreferenceFragmentCompat implements Sh
             }
         }
     }
-
-//    private static void bindSummary(Preference preference){
-//        preference.setOnPreferenceChangeListener(listener);
-//        listener.onPreferenceChange(preference,
-//                PreferenceManager.getDefaultSharedPreferences(preference.getContext())
-//                        .getString(preference.getKey(), ""));
-//    }
-
-//    private static Preference.OnPreferenceChangeListener listener = new Preference.OnPreferenceChangeListener() {
-//        @Override
-//        public boolean onPreferenceChange(Preference preference, Object newValue) {
-//            String stringSortSelected = newValue.toString();
-//            if (preference instanceof ListPreference){
-//                ListPreference listPreference = (ListPreference) preference;
-//                int index = listPreference.findIndexOfValue(stringSortSelected);
-//                //Set the summary to show the value
-//                preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-//            }
-//
-//            return true;
-//        }
-//    };
-
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
