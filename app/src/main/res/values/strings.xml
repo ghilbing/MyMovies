@@ -25,6 +25,7 @@
     <string name="favorite_added">Favorite Added</string>
     <string name="favorite_removed">Favorite Removed</string>
     <string name="movie_exists">Movie already selected as favorite</string>
+    <string name="get_api_key_youtube">Please, get api key from youtube.</string>
 
 
 </resources>

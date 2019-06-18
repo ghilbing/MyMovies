@@ -1,5 +1,6 @@
 package com.hilbing.mymovies.model;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -162,6 +163,10 @@ public class Trailer implements Parcelable{
             dest.writeValue(site);
             dest.writeValue(size);
             dest.writeValue(type);
+        }
+
+        public Uri getYoutubeURL(){
+            return Uri.parse("http://www.youtube.watch?v=" + getKey());
         }
 
         public int describeContents() {
