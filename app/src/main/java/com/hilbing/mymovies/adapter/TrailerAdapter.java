@@ -58,20 +58,30 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
         TextView mTrailerTitle;
 
 
-        public TrailerViewHolder(@NonNull View itemView) {
+        public TrailerViewHolder(@NonNull final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            Toast.makeText(mContext, String.valueOf(getAdapterPosition()), Toast.LENGTH_LONG).show();
-            int index = getAdapterPosition();
 
-            Uri uriVideo = mTrailerList.get(index).getYoutubeURL();
-            String key = mTrailerList.get(getAdapterPosition()).getKey();
-            Log.d(TAG, "Play URL: " + uriVideo);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                    Uri uriVideo = mTrailerList.get(pos).getYoutubeURL();
+                    String key = mTrailerList.get(getAdapterPosition()).getKey();
+                    Log.d(TAG, "Play URL: " + uriVideo);
 
-            Intent intent = new Intent(mContext, YoutubePlayerActivity.class);
-            intent.putExtra(YoutubePlayerActivity.EXTRA_KEY, key);
-            mContext.startActivity(intent);
+                    Intent intent = new Intent(mContext, YoutubePlayerActivity.class);
+                    intent.putExtra(YoutubePlayerActivity.EXTRA_KEY, key);
+                    intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(intent);
+                }
+            });
+
+
+
+
+
 
 
 

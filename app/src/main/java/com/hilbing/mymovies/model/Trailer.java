@@ -166,7 +166,7 @@ public class Trailer implements Parcelable{
         }
 
         public Uri getYoutubeURL(){
-            return Uri.parse("http://www.youtube.watch?v=" + getKey());
+            return Uri.parse("vnd.youtube:" + getKey());
         }
 
         public int describeContents() {
