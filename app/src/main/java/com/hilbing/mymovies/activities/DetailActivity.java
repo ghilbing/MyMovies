@@ -1,7 +1,9 @@
 package com.hilbing.mymovies.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
@@ -29,6 +31,9 @@ import com.hilbing.mymovies.model.Review;
 import com.hilbing.mymovies.model.ReviewResults;
 import com.hilbing.mymovies.model.Trailer;
 import com.hilbing.mymovies.model.TrailerResults;
+import com.hilbing.mymovies.roomdb.AplicationDatabase;
+import com.hilbing.mymovies.roomdb.Favorite;
+import com.hilbing.mymovies.viewModel.ApplicationExecutors;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,12 +76,16 @@ public class DetailActivity extends AppCompatActivity {
     public static final String MOVIE = "movie";
     private Movie mMovie;
     private  String baseImageUrl = "https://image.tmdb.org/t/p/w500";
+    private AplicationDatabase mRoomDB;
+    List<Favorite> favoriteMovies = new ArrayList<>();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
+
+        mRoomDB = AplicationDatabase.getInstance(getApplicationContext());
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -98,7 +107,9 @@ public class DetailActivity extends AppCompatActivity {
 
         initViews();
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        checkStatus(mMovie.getTitle());
+
+        /*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
             @Override
             public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
@@ -119,10 +130,10 @@ public class DetailActivity extends AppCompatActivity {
                     Snackbar.make(buttonView, getResources().getString(R.string.favorite_removed), Snackbar.LENGTH_LONG).show();
                 }
             }
-        });
+        });*/
     }
 
-    public void saveFavorite() {
+ /*   public void saveFavoriteSQL() {
         favoriteMoviesDBHelper = new FavoriteMoviesDBHelper(activity);
         favoriteMovie = new Movie();
 
@@ -136,7 +147,76 @@ public class DetailActivity extends AppCompatActivity {
 
         favoriteMoviesDBHelper.addFavorite(favoriteMovie);
 
+    }*/
+
+    public void saveFavorite(){
+        Double rating = mMovie.getVoteAverage();
+        final Favorite favorite = new Favorite(mMovie.getId(), mMovie.getTitle(), rating, mMovie.getPosterPath(), mMovie.getOverview(), mMovie.getReleaseDate());
+        ApplicationExecutors.getInstance().getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mRoomDB.favoriteDAO().insertFavorite(favorite);
+            }
+        });
     }
+
+    private void deleteFavorite(final int movie_id){
+        ApplicationExecutors.getInstance().getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mRoomDB.favoriteDAO().deleteFavoriteById(movie_id);
+            }
+        });
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void checkStatus(final String movieName){
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                favoriteMovies.clear();
+                favoriteMovies = mRoomDB.favoriteDAO().loadAll(movieName);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid){
+                if (favoriteMovies.size() > 0){
+                    mFavorite.setFavorite(true);
+                    mFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+                        @Override
+                        public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean fav) {
+                            if (fav == true){
+                                saveFavorite();
+                                Snackbar.make(buttonView, R.string.favorite_added, Snackbar.LENGTH_LONG).show();
+
+                            } else {
+                                int id = mMovie.getId();
+                                deleteFavorite(id);
+                                Snackbar.make(buttonView, R.string.favorite_removed, Snackbar.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                } else {
+                    mFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+                        @Override
+                        public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean fav) {
+                            if (fav == true){
+                                saveFavorite();
+                                Snackbar.make(buttonView, R.string.favorite_added, Snackbar.LENGTH_LONG).show();
+
+                            } else {
+                                int id = mMovie.getId();
+                                deleteFavorite(id);
+                                Snackbar.make(buttonView, R.string.favorite_removed, Snackbar.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
+            }
+        }.execute();
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
