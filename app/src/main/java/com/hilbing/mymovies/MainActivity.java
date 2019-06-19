@@ -7,6 +7,8 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -59,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private List<Movie> movies;
     private GridAdapter mAdapter;
+    private Bundle mBundleRecyclerViewState;
+    private Parcelable mListState = null;
 
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
@@ -160,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         //Method to detect orientation of the screen and change the grid columns
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+
             mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
@@ -361,5 +366,37 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onPause() {
         super.onPause();
         unregisterSharedPreferencesListener();
+        //To store the recyclerview state
+        mBundleRecyclerViewState = new Bundle();
+        mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(getResources().getString(R.string.recycler_scroll_position_key), mListState);
+
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        //Method to detect orientation of the screen and change the grid columns
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            gridLayoutManager = new GridLayoutManager(this, 2);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
+        } else {
+            gridLayoutManager = new GridLayoutManager(this, 3);
+            mRecyclerView.setLayoutManager(gridLayoutManager);
+        }
+
+        //When orientation is changed
+        if (mBundleRecyclerViewState != null){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    mListState = mBundleRecyclerViewState.getParcelable(getResources().getString(R.string.recycler_scroll_position_key));
+                    mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+                }
+            }, 50);
+        }
+        mRecyclerView.setLayoutManager(gridLayoutManager);
     }
 }
