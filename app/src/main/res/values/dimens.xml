@@ -16,5 +16,6 @@
     <dimen name="text_size_normal">12sp</dimen>
     <dimen name="text_size_small">10sp</dimen>
     <dimen name="text_size_x_small">8sp</dimen>
+    <dimen name="detail_image_height_land">300dp</dimen>
 
 </resources>

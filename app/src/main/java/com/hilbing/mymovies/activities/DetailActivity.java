@@ -75,7 +75,7 @@ public class DetailActivity extends AppCompatActivity {
     private final AppCompatActivity activity = DetailActivity.this;
     public static final String MOVIE = "movie";
     private Movie mMovie;
-    private  String baseImageUrl = "https://image.tmdb.org/t/p/w500";
+    private String baseImageUrl = "https://image.tmdb.org/t/p/w500";
     private AplicationDatabase mRoomDB;
     List<Favorite> favoriteMovies = new ArrayList<>();
 
@@ -133,7 +133,7 @@ public class DetailActivity extends AppCompatActivity {
         });*/
     }
 
- /*   public void saveFavoriteSQL() {
+    public void saveFavoriteSQLite() {
         favoriteMoviesDBHelper = new FavoriteMoviesDBHelper(activity);
         favoriteMovie = new Movie();
 
@@ -147,7 +147,14 @@ public class DetailActivity extends AppCompatActivity {
 
         favoriteMoviesDBHelper.addFavorite(favoriteMovie);
 
-    }*/
+    }
+
+    public void removeFavoriteSQLite(int movie_id){
+        favoriteMoviesDBHelper = new FavoriteMoviesDBHelper(DetailActivity.this);
+        favoriteMoviesDBHelper.removeFavorite(mMovie.getId());
+    }
+
+
 
     public void saveFavorite(){
         Double rating = mMovie.getVoteAverage();
@@ -156,6 +163,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void run() {
                 mRoomDB.favoriteDAO().insertFavorite(favorite);
+                saveFavoriteSQLite();
             }
         });
     }
@@ -165,6 +173,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void run() {
                 mRoomDB.favoriteDAO().deleteFavoriteById(movie_id);
+                removeFavoriteSQLite(movie_id);
             }
         });
     }
