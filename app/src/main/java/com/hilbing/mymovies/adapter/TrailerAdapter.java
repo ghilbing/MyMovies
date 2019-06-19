@@ -10,15 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.hilbing.mymovies.MyApplication;
 import com.hilbing.mymovies.R;
 import com.hilbing.mymovies.activities.YoutubePlayerActivity;
 import com.hilbing.mymovies.model.Trailer;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -78,27 +73,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
                 }
             });
 
-
-
-
-
-
-
-
-
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    int position = getAdapterPosition();
-//                    if (position != RecyclerView.NO_POSITION){
-//                        String videoId = mTrailerList.get(position).getKey();
-//                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoId));
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        intent.putExtra("VIDEO_ID", videoId);
-//                        mContext.startActivity(intent);
-//                    }
-//                }
-//            });
         }
     }
 }
